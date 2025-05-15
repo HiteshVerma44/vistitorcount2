@@ -34,7 +34,7 @@ app.get("/api/total-visitors", async (req, res) => {
       requestBody: {
         dateRanges: [
           {
-            startDate: "yesterday", // customize if needed
+            startDate: "2024-05-13", // customize if needed
             endDate: "today",
           },
         ],
@@ -44,7 +44,6 @@ app.get("/api/total-visitors", async (req, res) => {
           { name: "newUsers" },     // 1
           { name: "sessions" },     // 2
           { name: "eventCount" },   // 3
-          { name: "screenPageViews" }, // Added screenPageViews metric
         ],
       },
     });
@@ -53,32 +52,26 @@ app.get("/api/total-visitors", async (req, res) => {
     let scrolls = 0;
     let totalUsers = "0";
     let sessions = "0";
-    let screenPageViews = "0"; // Initialize the new screenPageViews variable
 
     for (const row of response.data.rows || []) {
       const eventName = row.dimensionValues[0].value;
       const eventCount = parseInt(row.metricValues[3]?.value || "0", 10);
-      const screenPageViewCount = parseInt(row.metricValues[4]?.value || "0", 10); // Get screenPageViews count
 
       if (eventName === "page_view") pageViews = eventCount;
       if (eventName === "scroll") scrolls = eventCount;
 
-      if (eventName === "page_view") {
-        totalUsers = row.metricValues[0]?.value || totalUsers;
-        sessions = row.metricValues[2]?.value || sessions;
-        screenPageViews = row.metricValues[4]?.value || screenPageViews;
-      }
-      
+      totalUsers = row.metricValues[0]?.value || totalUsers;
+      sessions = row.metricValues[2]?.value || sessions;
+
       console.log(`event: ${eventName}, values:`, row.metricValues);
     }
 
     console.log('----------------------------------------------------------------------------------------------');
     res.json({
-      totalVisitors: totalUsers,          // Real visitor count
+      totalVisitors: totalUsers,          // ✅ Real visitor count
       totalSessions: sessions,
-      pageViews: pageViews.toString(),    // Total page loads
+      pageViews: pageViews.toString(),    // ✅ Total page loads
       scrolls: scrolls.toString(),
-      screenPageViews: screenPageViews.toString(), // Include screenPageViews in the response
     });
   } catch (error) {
     console.error("Error fetching analytics:", error.response?.data || error.message);

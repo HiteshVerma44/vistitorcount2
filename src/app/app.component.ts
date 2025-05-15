@@ -7,18 +7,10 @@ import { VisitorService } from './visitor.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   standalone: false,
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-
-
-  
   totalVisitors: number = 0;
-
-
-
-
-
 
   constructor(
     private router: Router,
@@ -27,18 +19,20 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.router.events
-      .pipe(
-        filter((event: RouterEvent): event is NavigationEnd => event instanceof NavigationEnd)
-      )
-      .subscribe((event: NavigationEnd) => {
-        this.googleAnalyticsService.sendPageView(event.urlAfterRedirects);
-      });
+    // this.router.events
+    //   .pipe(
+    //     filter(
+    //       (event: RouterEvent): event is NavigationEnd =>
+    //         event instanceof NavigationEnd
+    //     )
+    //   )
+    //   .subscribe((event: NavigationEnd) => {
+    //     this.googleAnalyticsService.sendPageView(event.urlAfterRedirects);
+    //   });
 
-
-
-      this.visitorService.getTotalVisitors().subscribe((data) => {
-        this.totalVisitors = data.totalVisitors;
-      });
+    this.visitorService.getTotalVisitors().subscribe((data) => {
+      console.log(data, 'data in app');
+      this.totalVisitors = data.totalVisitors;
+    });
   }
 }
